@@ -35,5 +35,41 @@ describe "tests del tamagotchi" {
 		tamagotchiTriste.comer()
 		assert.that(tamagotchiTriste.estaContento())
 	}
+
+	test "jugar solo contento primera vez" {
+		tamagotchiComun.jugarSolo()
+		assert.equals(2, tamagotchiComun.felicidad())
+	}
+	
+	test "jugar solo contento 3 veces" {
+		tamagotchiComun.jugarSolo()
+		tamagotchiComun.jugarSolo()
+		tamagotchiComun.jugarSolo()
+		assert.equals(6, tamagotchiComun.felicidad())
+		assert.equals("a Hambriento", tamagotchiComun.estado().kindName())
+	}
+		
+		
+	test "jugar solo triste" {
+		tamagotchiTriste.jugarSolo()
+		assert.that(tamagotchiTriste.estaContento())
+	}
+
+	test "jugar solo hambriento" {
+		tamagotchiHambriento.jugarSolo()
+		assert.equals(-4, tamagotchiHambriento.felicidad())
+	}
+	
+	test "jugar con alguien triste" {
+		tamagotchiTriste.jugarCon(tamagotchiHambriento)
+		assert.equals(tamagotchiTriste.estaContento())
+		assert.equals(tamagotchiHambriento.estaContento())
+	}
+	
+	test "jugar con alguien contento" {
+		tamagotchiComun.jugarCon(tamagotchiTriste)
+		assert.equals(tamagotchiTriste.estaContento())
+		assert.equals(4, tamagotchiComun.felicidad())
+	}
 	
 }

@@ -10,8 +10,23 @@ class Estado {
 }
 
 class Contento inherits Estado {
+	var vecesQueJugo = 0
+	
 	method comer() {
 		duenio.ponerseMasFeliz(1)
+	}
+	
+	method jugarSolo() {
+		duenio.ponerseMasFeliz(2)
+		vecesQueJugo++
+		if (vecesQueJugo > 2) {
+			duenio.ponerseHambriento()
+		}
+	}
+	
+	method jugarCon(otro) {	
+		otro.jugarSolo()
+		duenio.ponerseMasFeliz(4)	
 	}
 	
 	override method estaContento() = true
@@ -21,6 +36,12 @@ class Hambriento inherits Estado {
 	method comer() {
 		duenio.ponerseContento()
 	}
+	
+	method jugarSolo() {
+		duenio.ponerseMenosFeliz(4)
+	}
+	
+	method jugarCon(otro) {	}
 }
 
 class Triste inherits Estado {
@@ -38,7 +59,16 @@ class Triste inherits Estado {
 		}
 	}
 	
-	method estaTristeHaceMucho() = (new Date() - cuandoSePusoTriste) > 1 
+	method jugarSolo() {
+		duenio.ponerseContento()
+	}
+	
+	method estaTristeHaceMucho() = (new Date() - cuandoSePusoTriste) > 1
+	
+	method jugarCon(otro) {	
+		duenio.ponerseContento()
+		otro.ponerseContento()
+	}
 }
 
 class Tamagotchi {
@@ -47,15 +77,27 @@ class Tamagotchi {
 	var felicidad = 0
 	
 	constructor() {
-		self.ponerseContento()
+		estado = new Contento(self)
 	}
 	
 	method comer() {
 		estado.comer()		
 	}	
 
+	method jugarSolo() {
+		estado.jugarSolo()
+	}
+
+	method jugarCon(otro) {
+		estado.jugarCon(otro)
+	}
+	
 	method ponerseMasFeliz(cuanto) {
 		felicidad += cuanto
+	}
+
+	method ponerseMenosFeliz(cuanto) {
+		self.ponerseMasFeliz(cuanto.invert())
 	}
 
 	method estado() = estado	
@@ -64,7 +106,9 @@ class Tamagotchi {
 	method estaContento() = estado.estaContento()
 	
 	method ponerseContento() {
-		estado = new Contento(self)
+		if (!self.estaContento()) {
+			estado = new Contento(self)
+		}
 	}
 	
 	method ponerseHambriento() {
