@@ -18,18 +18,23 @@ class Contento inherits Estado {
 	
 	method jugarSolo() {
 		duenio.ponerseMasFeliz(2)
+		self.actualizarVecesQueJugo()
+	}
+	
+	method jugarCon(otro) {	
+		otro.jugarSolo()
+		duenio.ponerseMasFeliz(4)
+		self.actualizarVecesQueJugo()
+	}
+	
+	override method estaContento() = true
+	
+	method actualizarVecesQueJugo() {
 		vecesQueJugo++
 		if (vecesQueJugo > 2) {
 			duenio.ponerseHambriento()
 		}
 	}
-	
-	method jugarCon(otro) {	
-		otro.jugarSolo()
-		duenio.ponerseMasFeliz(4)	
-	}
-	
-	override method estaContento() = true
 }
 
 class Hambriento inherits Estado {
@@ -69,6 +74,22 @@ class Triste inherits Estado {
 		duenio.ponerseContento()
 		otro.ponerseContento()
 	}
+}
+
+class Cansado inherits Estado {
+	
+	method comer() {
+		duenio.ponerseMenosFeliz(5)
+	}
+	
+	method jugarSolo() {
+		error.throwWithMessage("No puedo jugar solo si estoy cansado")
+	}
+
+	method jugarCon(otro) {
+		error.throwWithMessage("No puedo jugar con otro si estoy cansado")
+	}
+
 }
 
 class Tamagotchi {
@@ -119,4 +140,46 @@ class Tamagotchi {
 		estado = new Triste(self)
 	}	
 
+}
+
+class Gato inherits Tamagotchi {
+	
+	override method jugarCon(otro) {
+		self.ponerseTriste()
+	}
+}
+
+class Perro inherits Tamagotchi {
+	
+	override method comer() {
+		self.ponerseMasFeliz(5)
+		super()
+	}
+}
+
+class Perezoso inherits Tamagotchi {
+	
+	override method jugarSolo() {
+		super()
+		self.chequearCansancio()
+	}
+	
+	override method jugarCon(otro) {
+		super(otro)
+		self.chequearCansancio()
+	}
+	
+	method chequearCansancio() {
+		if (felicidad < 10) {
+			self.cansarse()
+		}
+	}
+	
+	method cansarse() {
+		estado = new Cansado(self)
+	}
+	
+	method dormir() {
+		self.ponerseContento()
+	}
 }
