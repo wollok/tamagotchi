@@ -125,7 +125,10 @@ class Tamagotchi {
 	method felicidad() = felicidad
 	
 	method estaContento() = estado.estaContento()
-	
+	method estaCansado() = self.verificarEstado("Cansado")
+	method estaHambriento() = self.verificarEstado("Hambriento")
+	method estaTriste() = self.verificarEstado("Triste")
+		
 	method ponerseContento() {
 		if (!self.estaContento()) {
 			estado = new Contento(self)
@@ -138,7 +141,9 @@ class Tamagotchi {
 
 	method ponerseTriste() {
 		estado = new Triste(self)
-	}	
+	}
+	
+	method verificarEstado(_estado) = estado.kindName() == "a " + _estado
 
 }
 

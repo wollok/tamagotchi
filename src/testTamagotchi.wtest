@@ -52,7 +52,7 @@ describe "tests del tamagotchi" {
 		tamagotchiComun.jugarSolo()
 		tamagotchiComun.jugarSolo()
 		assert.equals(6, tamagotchiComun.felicidad())
-		assert.equals("a Hambriento", tamagotchiComun.estado().kindName())
+		assert.that(tamagotchiComun.estaHambriento())
 	}
 		
 		
@@ -68,13 +68,13 @@ describe "tests del tamagotchi" {
 	
 	test "jugar con alguien triste" {
 		tamagotchiTriste.jugarCon(tamagotchiHambriento)
-		assert.equals(tamagotchiTriste.estaContento())
-		assert.equals(tamagotchiHambriento.estaContento())
+		assert.that(tamagotchiTriste.estaContento())
+		assert.that(tamagotchiHambriento.estaContento())
 	}
 	
 	test "jugar con alguien contento" {
 		tamagotchiComun.jugarCon(tamagotchiTriste)
-		assert.equals(tamagotchiTriste.estaContento())
+		assert.that(tamagotchiTriste.estaContento())
 		assert.equals(4, tamagotchiComun.felicidad())
 	}
 
@@ -85,12 +85,12 @@ describe "tests del tamagotchi" {
 
 	test "gato no quiere jugar con otro" {
 		gato.jugarCon(perro)
-		assert.equals("a Triste", gato.estado().kindName())
+		assert.that(gato.estaTriste())
 	}	
 		
 	test "perezoso juega y queda cansado" {
 		perezoso.jugarSolo()
-		assert.equals("a Cansado", perezoso.estado().kindName())
+		assert.that(perezoso.estaCansado())
 	}
 	
 	test "perezoso juega y queda cansado, no puede volver a jugar" {
