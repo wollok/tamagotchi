@@ -5,9 +5,6 @@ describe "tests del tamagotchi" {
 	var tamagotchiComun
 	var tamagotchiHambriento
 	var tamagotchiTriste
-	var perro
-	var gato
-	var perezoso
 	
 	fixture {
 		tamagotchiComun = new Tamagotchi()
@@ -15,9 +12,6 @@ describe "tests del tamagotchi" {
 		tamagotchiHambriento.ponerseHambriento()
 		tamagotchiTriste = new Tamagotchi()
 		tamagotchiTriste.ponerseTriste()
-		perro = new Perro()
-		gato = new Gato()
-		perezoso = new Perezoso()
 	}
 		
 	test "comer estando contento" {
@@ -36,8 +30,7 @@ describe "tests del tamagotchi" {
 	}
 	
 	test "comer estando triste hace mucho" {
-		var triste = tamagotchiTriste.estado()
-		triste.cuandoSePusoTriste(new Date(1, 1, 2016))
+		tamagotchiTriste.cuandoSePusoTriste(new Date(1, 1, 2016))
 		tamagotchiTriste.comer()
 		assert.that(tamagotchiTriste.estaContento())
 	}
@@ -78,37 +71,4 @@ describe "tests del tamagotchi" {
 		assert.equals(4, tamagotchiComun.felicidad())
 	}
 
-	test "perro come" {
-		perro.comer()
-		assert.equals(6, perro.felicidad())
-	}
-
-	test "gato no quiere jugar con otro" {
-		gato.jugarCon(perro)
-		assert.that(gato.estaTriste())
-	}	
-		
-	test "perezoso juega y queda cansado" {
-		perezoso.jugarSolo()
-		assert.that(perezoso.estaCansado())
-	}
-	
-	test "perezoso juega y queda cansado, no puede volver a jugar" {
-		perezoso.jugarSolo()
-		assert.throwsExceptionWithMessage("No puedo jugar solo si estoy cansado", { perezoso.jugarSolo() })
-	}
-
-	test "perezoso juega y queda cansado, come y baja felicidad" {
-		perezoso.jugarSolo()
-		perezoso.comer()
-		assert.equals(-3, perezoso.felicidad())
-	}
-
-	test "perezoso juega y queda cansado, duerme y queda contento" {
-		perezoso.jugarSolo()
-		perezoso.comer()
-		perezoso.dormir()
-		assert.that(perezoso.estaContento())
-	}
-	
 }

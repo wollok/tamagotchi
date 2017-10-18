@@ -1,116 +1,85 @@
-class Estado {
-	
-	var duenio
-	
-	constructor(_duenio) {
-		duenio = _duenio
-	}
-	
-	method estaContento() = false
-}
-
-class Contento inherits Estado {
-	var vecesQueJugo = 0
-	
-	method comer() {
-		duenio.ponerseMasFeliz(1)
-	}
-	
-	method jugarSolo() {
-		duenio.ponerseMasFeliz(2)
-		self.actualizarVecesQueJugo()
-	}
-	
-	method jugarCon(otro) {	
-		otro.jugarSolo()
-		duenio.ponerseMasFeliz(4)
-		self.actualizarVecesQueJugo()
-	}
-	
-	override method estaContento() = true
-	
-	method actualizarVecesQueJugo() {
-		vecesQueJugo++
-		if (vecesQueJugo > 2) {
-			duenio.ponerseHambriento()
-		}
-	}
-}
-
-class Hambriento inherits Estado {
-	method comer() {
-		duenio.ponerseContento()
-	}
-	
-	method jugarSolo() {
-		duenio.ponerseMenosFeliz(4)
-	}
-	
-	method jugarCon(otro) {	}
-}
-
-class Triste inherits Estado {
-	var cuandoSePusoTriste = new Date()
-
-	method cuandoSePusoTriste(_fecha) {
-		cuandoSePusoTriste = _fecha	
-	}
-	
-	method comer() {
-		if (self.estaTristeHaceMucho()) {
-			duenio.ponerseContento()
-		} else {
-			error.throwWithMessage("No es correcto que coma si está triste hace poco")
-		}
-	}
-	
-	method jugarSolo() {
-		duenio.ponerseContento()
-	}
-	
-	method estaTristeHaceMucho() = (new Date() - cuandoSePusoTriste) > 1
-	
-	method jugarCon(otro) {	
-		duenio.ponerseContento()
-		otro.ponerseContento()
-	}
-}
-
-class Cansado inherits Estado {
-	
-	method comer() {
-		duenio.ponerseMenosFeliz(5)
-	}
-	
-	method jugarSolo() {
-		error.throwWithMessage("No puedo jugar solo si estoy cansado")
-	}
-
-	method jugarCon(otro) {
-		error.throwWithMessage("No puedo jugar con otro si estoy cansado")
-	}
-
-}
-
 class Tamagotchi {
 
+	/** El estado es un int, que maneja diferentes estados
+		1  	contento
+		2	triste
+		3	hambriento
+		4	cansado (a futuro)
+	 */
 	var estado
 	var felicidad = 0
 	
+	// Pérdida de cohesión
+	// el objeto Tamagotchi debe guardar información del estado temporal
+	// que no es común para todos los estados
+	var vecesQueJugo = 0
+	var cuandoSePusoTriste = new Date()
+	
 	constructor() {
-		estado = new Contento(self)
+		self.ponerseContento()
 	}
+
+	method estaTristeHaceMucho() = (new Date() - cuandoSePusoTriste) > 1
 	
 	method comer() {
-		estado.comer()		
+		// Contento
+		if (estado == 1) {
+			self.ponerseMasFeliz(1)
+		}
+		// Triste 
+		if (estado == 2) {
+			if (self.estaTristeHaceMucho()) {
+				self.ponerseContento()
+			} else {
+				error.throwWithMessage("No es correcto que coma si está triste hace poco")
+			}
+		}
+		// Hambriento
+		if (estado == 3) {
+			self.ponerseContento()
+		}
 	}	
 
 	method jugarSolo() {
-		estado.jugarSolo()
+		// Contento
+		if (estado == 1) {
+			self.ponerseMasFeliz(2)
+			self.actualizarVecesQueJugo()
+		} else {
+			// Triste 
+			if (estado == 2) {
+				self.ponerseContento()			
+			} else {
+				// Hambriento
+				if (estado == 3) {
+					self.ponerseMenosFeliz(4)
+				}
+			}
+		}
+	}
+
+	method actualizarVecesQueJugo() {
+		vecesQueJugo++
+		if (vecesQueJugo > 2) {
+			self.ponerseHambriento()
+		}
 	}
 
 	method jugarCon(otro) {
-		estado.jugarCon(otro)
+		// Contento
+		if (estado == 1) {
+			otro.jugarSolo()
+			self.ponerseMasFeliz(4)
+			self.actualizarVecesQueJugo()
+		}
+		// Triste 
+		if (estado == 2) {
+			self.ponerseContento()
+			otro.ponerseContento()			
+		}
+		// Hambriento
+		if (estado == 3) {
+		}
 	}
 	
 	method ponerseMasFeliz(cuanto) {
@@ -123,68 +92,26 @@ class Tamagotchi {
 
 	method estado() = estado	
 	method felicidad() = felicidad
+	method cuandoSePusoTriste(fecha) { cuandoSePusoTriste = fecha }
 	
-	method estaContento() = estado.estaContento()
-	method estaCansado() = self.verificarEstado("Cansado")
-	method estaHambriento() = self.verificarEstado("Hambriento")
-	method estaTriste() = self.verificarEstado("Triste")
+	method estaContento() = estado == 1
+	method estaHambriento() = self.verificarEstado(3)
+	method estaTriste() = self.verificarEstado(2)
 		
 	method ponerseContento() {
-		if (!self.estaContento()) {
-			estado = new Contento(self)
-		}
+		estado = 1 // Contento
+		vecesQueJugo = 0
 	}
 	
 	method ponerseHambriento() {
-		estado = new Hambriento(self)
+		estado = 3 // Hambriento
 	}	
 
 	method ponerseTriste() {
-		estado = new Triste(self)
+		estado = 2 // Triste
+		cuandoSePusoTriste = new Date()
 	}
 	
-	method verificarEstado(_estado) = estado.kindName() == "a " + _estado
+	method verificarEstado(_estado) = estado == _estado
 
-}
-
-class Gato inherits Tamagotchi {
-	
-	override method jugarCon(otro) {
-		self.ponerseTriste()
-	}
-}
-
-class Perro inherits Tamagotchi {
-	
-	override method comer() {
-		self.ponerseMasFeliz(5)
-		super()
-	}
-}
-
-class Perezoso inherits Tamagotchi {
-	
-	override method jugarSolo() {
-		super()
-		self.chequearCansancio()
-	}
-	
-	override method jugarCon(otro) {
-		super(otro)
-		self.chequearCansancio()
-	}
-	
-	method chequearCansancio() {
-		if (felicidad < 10) {
-			self.cansarse()
-		}
-	}
-	
-	method cansarse() {
-		estado = new Cansado(self)
-	}
-	
-	method dormir() {
-		self.ponerseContento()
-	}
 }
