@@ -36,8 +36,7 @@ describe "tests del tamagotchi" {
 	}
 	
 	test "comer estando triste hace mucho" {
-		var triste = tamagotchiTriste.estado()
-		triste.cuandoSePusoTriste(new Date(1, 1, 2016))
+		tamagotchiTriste.cuandoSePusoTriste(new Date(1, 1, 2016))
 		tamagotchiTriste.comer()
 		assert.that(tamagotchiTriste.estaContento())
 	}

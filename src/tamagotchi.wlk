@@ -7,6 +7,8 @@ class Estado {
 	}
 	
 	method estaContento() = false
+	method cuandoSePusoTriste(fecha) { error.throwWithMessage("No debe definir cuándo se puso triste para un estado que no es triste") }
+
 }
 
 class Contento inherits Estado {
@@ -52,7 +54,7 @@ class Hambriento inherits Estado {
 class Triste inherits Estado {
 	var cuandoSePusoTriste = new Date()
 
-	method cuandoSePusoTriste(_fecha) {
+	override method cuandoSePusoTriste(_fecha) {
 		cuandoSePusoTriste = _fecha	
 	}
 	
@@ -145,6 +147,8 @@ class Tamagotchi {
 	
 	method verificarEstado(_estado) = estado.kindName() == "a " + _estado
 
+	method cuandoSePusoTriste(fecha) { estado.cuandoSePusoTriste(fecha) }
+	
 }
 
 class Gato inherits Tamagotchi {
